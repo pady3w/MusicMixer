@@ -1,0 +1,151 @@
+/* Mixer.css - Styles for the mixer components and interface */
+
+.mixer-section {
+    padding: 80px 0;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.mixer-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.tracks {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.track {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+    gap: 15px;
+}
+
+.track-type {
+    background-color: var(--primary);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    min-width: 100px;
+    text-align: center;
+}
+
+.track-info {
+    flex: 1;
+}
+
+.track-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.track-artist {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.track-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.track-btn {
+    background: none;
+    border: none;
+    color: var(--light);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.2s;
+}
+
+.track-btn:hover {
+    color: var(--secondary);
+}
+
+.add-track {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.mixer-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.waveform {
+    height: 100px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.waveform::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.05) 2px,
+        rgba(255, 255, 255, 0.05) 4px
+    );
+}
+
+.waveform-graphic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.wave-bar {
+    flex: 1;
+    background-color: var(--secondary);
+    height: 30%;
+    margin: 0 1px;
+    border-radius: 2px;
+    opacity: 0.7;
+}
+
+.wave-bar:nth-child(odd) {
+    height: 50%;
+}
+
+.wave-bar:nth-child(3n) {
+    height: 70%;
+}
+
+.wave-bar:nth-child(5n) {
+    height: 35%;
+}
+
+@media (max-width: 768px) {
+    .mixer-controls {
+        flex-direction: column;
+    }
+}
