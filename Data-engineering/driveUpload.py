@@ -1,3 +1,4 @@
+# This script is responsible for uploading songs to drive to be processed using a google colab
 import os
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
