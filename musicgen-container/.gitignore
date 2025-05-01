@@ -1,0 +1,26 @@
+# Don't commit environment variables
+.env
+
+# Ignore model outputs and generated files
+output/
+*.wav
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Model checkpoints or weights
+*.pt
+*.th
+
+# VSCode settings (if you're using VSCode)
+.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Docker build context cache
+*.log
