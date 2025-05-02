@@ -2,6 +2,10 @@
 
 A Docker container for generating music using AI based on text prompts.
 
+## EC2 Summary
+
+- I have setup a server in AWS that can be turned on and off as needed to handle the compute needed for fast generation
+
 ## Prerequisites to run locally
 
 - Docker installed (with NVIDIA Container Toolkit if you want GPU acceleration)
@@ -11,7 +15,7 @@ A Docker container for generating music using AI based on text prompts.
 
 ## Setup Instructions
 
-### NVIDIA Driver Setup (Optional for GPU acceleration)
+### NVIDIA Driver Setup Locally (Optional for GPU acceleration)
 
 - Download the latest GPU drivers for your machine: https://www.nvidia.com/en-us/drivers/
 
@@ -74,4 +78,23 @@ curl -X POST http://<EC2-public-IP>:8080/generate \
   -d '{"prompt":"lofi hip hop"}'
 ```
 
-## NOTE 
+## Frontend/Backend Integration
+
+The backend currently forwards music generation requests to a Flask server. During local development, the Flask server runs on:
+http://localhost:5001/generate
+
+
+In production, the Flask server is deployed on an **EC2 instance**, and traffic should be sent to:
+http://<EC2-public-IP>:8080/generate
+
+So currently in the server.js you have:
+const response = await axios.post('http://localhost:5001/generate', { prompt }, { responseType: 'arraybuffer' });
+
+Replace that with:
+const response = await axios.post('http://<EC2-public-IP>:8080/generate', { prompt }, { responseType: 'arraybuffer' });
+ - the instance IP address can be found following these steps:
+-Navigate EC2
+-Click Instances
+-Click the instance ID of the capstone instance when it is running and the IP should be there
+-after running stop the instance, do not terminate stop it instead
+
