@@ -121,7 +121,7 @@ def generate():
 
         # Save to buffer (log saving stage)
         audio_buffer = io.BytesIO()
-        scipy.io.wavfile.write(audio_buffer, rate=model.sample_rate, data=wav[0, 0].numpy())
+        scipy.io.wavfile.write(audio_buffer, rate=model.sample_rate, data=wav_tensor[0].numpy())
         audio_buffer.seek(0)
 
         # Respond with the audio file
