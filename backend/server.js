@@ -119,8 +119,7 @@ app.post('/api/generate-music', async (req, res) => {
     //const response = await axios.post('http://localhost:5001/generate', { prompt }, { responseType: 'arraybuffer' });
 
     // generation locally with the musicgen-container through docker
-    const response = await axios.post('http://localhost:8080/generate', { prompt }, { responseType: 'arraybuffer' }); 
-
+    const response = await axios.post('http://18.222.63.164:8080/generate', { prompt }, { responseType: 'arraybuffer' });
 
     const fileBuffer = Buffer.from(response.data);
     const fileName = `${prompt}_${Date.now()}.wav`; // Generate unique filename
