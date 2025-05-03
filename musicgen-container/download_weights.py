@@ -1,8 +1,15 @@
 import boto3
 import os
 from botocore.exceptions import ClientError
+from botocore.config import Config
 
-s3 = boto3.client('s3')
+timeout_config = Config(
+    connect_timeout=30,  # how long to wait to establish a connection
+    read_timeout=300,     # how long to wait for a response
+    retries={'max_attempts': 5}  # optional retry logic
+)
+
+s3 = boto3.client('s3', config=timeout_config)
 bucket_name = os.getenv("BUCKET_NAME_MODEL", "NEW_MODEL_BUCKET")
 object_key = os.getenv("OBJECT_KEY" , "checkpoint.th")
 

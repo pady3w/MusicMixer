@@ -116,10 +116,14 @@ app.post('/api/generate-music', async (req, res) => {
 
   try {
     // Call MusicGen API to generate music (assuming Flask is running)
-    const response = await axios.post('http://localhost:5001/generate', { prompt }, { responseType: 'arraybuffer' });
+    //const response = await axios.post('http://localhost:5001/generate', { prompt }, { responseType: 'arraybuffer' });
+
+    // generation locally with the musicgen-container through docker
+    const response = await axios.post('http://localhost:8080/generate', { prompt }, { responseType: 'arraybuffer' }); 
+
 
     const fileBuffer = Buffer.from(response.data);
-    const fileName = `generated_song_${Date.now()}.wav`; // Generate unique filename
+    const fileName = `${prompt}_${Date.now()}.wav`; // Generate unique filename
 
     // Upload to S3 using SDK v3
     const data = await uploadFileToS3(fileBuffer, fileName, prompt);

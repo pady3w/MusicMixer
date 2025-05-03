@@ -1,5 +1,5 @@
+#FROM python:3.10-slim
 FROM python:3.10-slim
-
 # Install system packages
 RUN apt-get update && apt-get install -y ffmpeg git build-essential && apt-get clean
 
@@ -25,3 +25,4 @@ EXPOSE 8080
 
 # Run the server
 CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
+
