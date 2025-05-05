@@ -1,4 +1,4 @@
-import React from "react";
+import { HashLink as Link } from 'react-router-hash-link';
 
 const Footer = () => {
   return (
@@ -8,24 +8,23 @@ const Footer = () => {
           <div className="footer-column">
             <h4>MusicMixer</h4>
             <ul>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Our Team</a></li>
+              <li><Link smooth to="/about#about-us">About Us</Link></li>
+              <li><Link smooth to="/about#our-team">Our Team</Link></li>
             </ul>
           </div>
           
           <div className="footer-column">
             <h4>Features</h4>
             <ul>
-              <li><a href="#">Mixer Studio</a></li>
-              <li><a href="#">Song Library</a></li>
+              <li><Link smooth to="/about#music-gen">Music Generation</Link></li>
+              <li><Link smooth to="/about#lyric-gen">Lyric Generation</Link></li>
             </ul>
           </div>
           
           <div className="footer-column">
             <h4>Support</h4>
             <ul>
-              <li><a href="#">Help Center</a></li>
-              <li><a href="#">FAQs</a></li>
+              <li><Link smooth to="/about#faq">FAQs</Link></li>
             </ul>
           </div>
         </div>

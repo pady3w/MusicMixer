@@ -1,3 +1,4 @@
+import About from './components/MoreInfo/About';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './components/layout/Header';
 import Home from './components/home/Home';
@@ -17,6 +18,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/lyric-generation" element={<LyricGeneration />} />
               <Route path="/catalog" element={<GeneratedCatalog />} />
+              <Route path="/about" element={<About />} />
             </Routes>
             <Footer/>
           </main>

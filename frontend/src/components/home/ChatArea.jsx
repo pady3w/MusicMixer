@@ -8,137 +8,133 @@ const ChatArea = () => {
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    scrollToBottom();
+  //  scrollToBottom();
   }, [messages]);
 
-  const scrollToBottom = () => {
+ /* const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  };*/
+// Modified handleSubmit function to prevent duplicate outputs
+const handleSubmit = async (e) => {
+  e.preventDefault();
+   
+  if (prompt.trim() === "" || isGenerating) return;
+  
+  // Set generating state first
+  setIsGenerating(true);
+  
+  // Create all IDs upfront
+  const userMessageId = Date.now();
+  const lyricsLoadingId = userMessageId + 1;
+  const userPrompt = prompt;
+  
+  // Update with both messages at once to reduce renders
+  setMessages(prev => [
+    ...prev, 
+    { role: "user", content: userPrompt, id: userMessageId },
+    { id: lyricsLoadingId, role: "assistant", content: "Generating lyrics...", isLoading: true }
+  ]);
+  
+  // Clear input
+  setPrompt("");
+  
+  try {
+    // Step 1: Generate lyrics using OpenAI
+    const lyricsResponse = await fetch('http://localhost:3001/api/generate-lyrics', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt: userPrompt }),
+    });
     
-    if (prompt.trim() === "") return;
+    if (!lyricsResponse.ok) {
+      throw new Error(`Failed to generate lyrics: ${lyricsResponse.status}`);
+    }
     
-    // Add user message
-    const userMessage = { role: "user", content: prompt, id: Date.now() };
-    setMessages(prev => [...prev, userMessage]);
+    const lyricsData = await lyricsResponse.json();
     
-    // Clear input
-    const userPrompt = prompt;
-    setPrompt("");
-    
-    // Add assistant "typing" message for lyrics generation
-    setIsGenerating(true);
-    const lyricsLoadingId = Date.now();
-    setMessages(prev => [...prev, { 
-      id: lyricsLoadingId,
-      role: "assistant", 
-      content: "Generating lyrics...", 
-      isLoading: true 
-    }]);
-    
-    try {
-      // Step 1: Generate lyrics using OpenAI
-      const lyricsResponse = await fetch('http://localhost:3001/api/generate-lyrics', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt: userPrompt }),
+    if (lyricsData.success) {
+      // Create musicLoadingId once
+      const musicLoadingId = Date.now();
+      
+      // Update with both the lyrics result and music loading message at once
+      setMessages(prev => {
+        // First, update the lyrics loading message
+        //const updatedWithLyrics = 
+        return prev.map(msg => {
+          if (msg.id === lyricsLoadingId) {
+            return {
+              id: msg.id,
+              role: "assistant",
+              content: lyricsData.data.lyrics,
+              type: "lyrics"
+            };
+          }
+          return msg;
+        });  
       });
       
-      if (!lyricsResponse.ok) {
-        throw new Error(`Failed to generate lyrics: ${lyricsResponse.status}`);
-      }
-      
-      const lyricsData = await lyricsResponse.json();
-      
-      if (lyricsData.success) {
-        // Update the loading message with lyrics
-        setMessages(prev => {
-          return prev.map(msg => {
-            if (msg.id === lyricsLoadingId) {
-              return {
-                id: msg.id,
-                role: "assistant",
-                content: lyricsData.data.lyrics,
-                type: "lyrics"
-              };
-            }
-            return msg;
-          });
+      // Step 2: Generate music
+      try {
+        const musicResponse = await fetch('http://localhost:3001/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            prompt: userPrompt,
+            lyrics: lyricsData.data.lyrics 
+          }),
         });
         
-        // Add another loading message for music generation
-        const musicLoadingId = Date.now();
-        setMessages(prev => [...prev, { 
-          id: musicLoadingId,
-          role: "assistant", 
-          content: "Composing music based on these lyrics...", 
-          isLoading: true 
-        }]);
+        if (!musicResponse.ok) {
+          throw new Error(`Failed to generate music: ${musicResponse.status}`);
+        }
         
-        // Step 2: Generate music
-        try {
-          const musicResponse = await fetch('http://localhost:3001/api/generate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-              prompt: userPrompt,
-              lyrics: lyricsData.data.lyrics 
-            }),
-          });
-          
-          if (!musicResponse.ok) {
-            throw new Error(`Failed to generate music: ${musicResponse.status}`);
-          }
-          
-          const musicData = await musicResponse.json();
-          
-          if (musicData.success && musicData.data.audioUrl) {
-            // Update the music loading message with the audio player
-            setMessages(prev => {
-              return prev.map(msg => {
-                if (msg.id === musicLoadingId) {
-                  return {
-                    id: msg.id,
-                    role: "assistant",
-                    content: "Music generated successfully! Listen below:",
-                    type: "music",
-                    audioUrl: musicData.data.audioUrl
-                  };
-                }
-                return msg;
-              });
-            });
-          } else {
-            throw new Error("Failed to generate music");
-          }
-        } catch (musicError) {
-          console.error("Music generation error:", musicError);
-          
-          // Update the music loading message with error
+        const musicData = await musicResponse.json();
+        
+        if (musicData.success && musicData.data.audioUrl) {
+          // Single state update for music result
           setMessages(prev => {
             return prev.map(msg => {
               if (msg.id === musicLoadingId) {
                 return {
                   id: msg.id,
                   role: "assistant",
-                  content: "Failed to generate music. Please try again.",
-                  type: "error"
+                  content: "Music generated successfully! Listen below:",
+                  type: "music",
+                  audioUrl: musicData.data.audioUrl
                 };
               }
               return msg;
             });
           });
+        } else {
+          throw new Error("Failed to generate music");
         }
-      } else {
-        throw new Error("Lyrics generation failed");
+      } catch (musicError) {
+        console.error("Music generation error:", musicError);
+        
+        // Update the music loading message with error
+        setMessages(prev => {
+          return prev.map(msg => {
+            if (msg.id === musicLoadingId) {
+              return {
+                id: msg.id,
+                role: "assistant",
+                content: "Failed to generate music. Please try again.",
+                type: "error"
+              };
+            }
+            return msg;
+          });
+        });
       }
-    } catch (error) {
+    } else {
+      throw new Error("Lyrics generation failed");
+    }
+  } catch (error) {
       console.error("Error in generation process:", error);
       
       // Update any loading message with error
