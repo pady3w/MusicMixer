@@ -115,10 +115,10 @@
     padding: 10px;
     border-radius: 5px;
     font-size: 0.9rem;
-    max-height: 200px;
-    overflow-y: auto;
+    overflow: visible;
     font-family: inherit;
   }
+  
   
   .music-block {
     width: 100%;
