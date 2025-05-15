@@ -6,7 +6,7 @@ This project allows users to generate music in two different ways: instrumental 
 ## Application in Action
 https://youtu.be/RgAQfM48u6g 
 
-##Team members
+## Team members
 - Parker Dierkens
 - Michael Hackmann
 - Olo Masiza
